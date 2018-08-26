@@ -1,17 +1,24 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
+title: "Reproducible Research: Peer Assessment 1\nExploring Activity monitoring data"
 output: 
   html_document:
+    toc: true
     keep_md: true
 ---
 
-
-## Loading and preprocessing the data
+# Loading and preprocessing the data  
 First, I load the packages, and change the language of my Rconsole to English, then read the table.  
 
 ```r
 library(lattice)
 library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.5.1
+```
+
+```r
 Sys.setlocale("LC_TIME", "English")
 ```
 
@@ -22,8 +29,10 @@ Sys.setlocale("LC_TIME", "English")
 ```r
 rawtable<-read.table("activity.csv",sep=",",header=T, colClasses=c("numeric","Date","numeric"))
 ```
-###What is mean total number of steps taken per day?
-After aggregating the data, I use the qplot function of the ggplot2 package  
+
+
+# What is mean total number of steps taken per day?  
+After aggregating the data, I use the qplot function of the ggplot2 package.  
 
 ```r
 rawtable_aggr_sum<-aggregate(steps~date,rawtable,sum)
@@ -34,7 +43,7 @@ qplot(rawtable_aggr_sum$steps,geom="histogram",
       ylab="Frequency")
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 We can also modify this plot to look more familiar:  
 
@@ -46,7 +55,7 @@ qplot(rawtable_aggr_sum$steps,geom="histogram",
       ylab="Frequency")
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 1. The **mean** value of total number of steps taken per day is:  
 
@@ -57,6 +66,7 @@ mean(rawtable_aggr_sum$steps,na.rm=T)
 ```
 ## [1] 10766.19
 ```
+
 2. The **median** value of total number of steps taken per day is:  
 
 ```r
@@ -66,8 +76,9 @@ median(rawtable_aggr_sum$steps,na.rm=T)
 ```
 ## [1] 10765
 ```
+
   
-## What is the average daily activity pattern?
+# What is the average daily activity pattern?
 1. Time series plot  
 
 ```r
@@ -78,7 +89,7 @@ plot(rawtable_aggr_mean$interval,rawtable_aggr_mean$steps,
      ylab="Mean number of steps")
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
 
@@ -91,7 +102,8 @@ rawtable_aggr_mean[which.max(rawtable_aggr_mean$steps),"interval"]
 ```
 As written above interval 835 has the highest number of steps. So between 8:30 and 8:35 or between 8:35 and 8:40. (It is not clear whether the name of the internal signs the beginning or the end of the 5 minutes interval, but I would vote for between 8:35 and 8:40.)
 
-## Imputing missing values
+
+# Imputing missing values
 1. Total number of missing values:  
 
 ```r
@@ -116,6 +128,7 @@ mode(rawtable_no_na$steps)<-"numeric"
 rawtable_no_na$date<-as.Date(rawtable_no_na$date,"%Y-%m-%d")
 rawtable_no_na_aggr<-aggregate(steps~date,rawtable_no_na,sum)
 ```
+
 We can check if we successfully removed the missing values:
 
 ```r
@@ -125,6 +138,7 @@ sum(is.na(rawtable_no_na$steps))
 ```
 ## [1] 0
 ```
+
 3. The **mean** value of total number of steps taken per day is:  
 
 ```r
@@ -134,6 +148,7 @@ mean(rawtable_no_na_aggr$steps)
 ```
 ## [1] 10766.19
 ```
+
 4. The **median** value of total number of steps taken per day is:  
 
 ```r
@@ -143,7 +158,8 @@ median(rawtable_no_na_aggr$steps)
 ```
 ## [1] 10766.19
 ```
-5. Comparing
+
+5. Comparison  
 
 ```r
 summary(rawtable_aggr_sum)
@@ -172,8 +188,10 @@ summary(rawtable_no_na_aggr)
 ##  3rd Qu.:2012-11-15   3rd Qu.:12811  
 ##  Max.   :2012-11-30   Max.   :21194
 ```
+
 We can see that although the mean and median are the same, but the quartile values changed slightly.  
-6. Histogram of the total number of steps taken each day
+
+6. Histogram of the total number of steps taken each day  
 
 ```r
 qplot(rawtable_no_na_aggr$steps,geom="histogram",
@@ -183,10 +201,11 @@ qplot(rawtable_no_na_aggr$steps,geom="histogram",
       ylab="Frequency")
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
-## Are there differences in activity patterns between weekdays and weekends?
-I wanted to use weekend/weekday as a factor in xyplot with lattice package. After using weekdays(), I convert the variable to factor.
+
+# Are there differences in activity patterns between weekdays and weekends?  
+I wanted to use weekend/weekday as a factor in xyplot with lattice package. After using weekdays(), I convert the variable to factor.  
 
 ```r
 rawtable_no_na$day_type<-weekdays(rawtable_no_na$date)
@@ -203,12 +222,12 @@ xyplot(steps ~ interval | rawtable_no_na_aggr2$day_type, data = rawtable_no_na_a
        ylab="Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
-If we look at the two plots, we can see, that on the weekends people tend to start moving later, but also stay active longer.
+If we look at the two plots, we can see, that on the weekends people tend to start moving later, but also stay active longer.  
   
 Comparing activity patterns between weekdays and weekends:
-If we check the normality of distribution, we can see, that it's not normal distribution
+If we check the normality of distribution, we can see, that it's not normal distribution.  
 
 ```r
 weekday<-rawtable_no_na_aggr2[rawtable_no_na_aggr2$day_type=="weekday","steps"]
@@ -221,7 +240,7 @@ shapiro.test(weekday)
 ## 	Shapiro-Wilk normality test
 ## 
 ## data:  weekday
-## W = 0.7778, p-value < 2.2e-16
+## W = 0.77778, p-value < 2.2e-16
 ```
 
 ```r
@@ -233,7 +252,7 @@ shapiro.test(weekend)
 ## 	Shapiro-Wilk normality test
 ## 
 ## data:  weekend
-## W = 0.8799, p-value = 2.937e-14
+## W = 0.87989, p-value = 2.937e-14
 ```
 Now, if we compare weekends and weekdays, we find no significant difference:
 
@@ -246,10 +265,10 @@ wilcox.test(weekday,weekend)
 ## 	Wilcoxon rank sum test with continuity correction
 ## 
 ## data:  weekday and weekend
-## W = 38375.5, p-value = 0.121
+## W = 38376, p-value = 0.121
 ## alternative hypothesis: true location shift is not equal to 0
 ```
-Now, if we compare the just morning hours (5:00-9:00) of the weekends and weekdays, we might find significant difference:
+Now, if we compare the just morning hours (5:00-9:00) of the weekends and weekdays, we might find significant difference:  
 
 ```r
 weekday05_09<-rawtable_no_na_aggr2[as.numeric(rawtable_no_na_aggr2$interval) %in% c(500:900) & rawtable_no_na_aggr2$day_type=="weekday","steps"]
@@ -270,6 +289,8 @@ wilcox.test(weekday05_09,weekend05_09)
 ## W = 1710.5, p-value = 0.0002945
 ## alternative hypothesis: true location shift is not equal to 0
 ```
-Conclusion:  
+
+
+# Conclusion:  
 To answer the question **"Are there differences in activity patterns between weekdays and weekends?"** more sophisticated stastical methods are needed (because of the timer series nature of the data).  
 I just wanted to have quick look at the data, but I am sure wilcoxon test is absolutely not the adequate method for analysing this type of data.
